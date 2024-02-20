@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AppMeteoMAUI.View.DetailsPage"
+             xmlns:viewModel="clr-namespace:AppMeteoMAUI.ViewModel"
+             xmlns:model="clr-namespace:AppMeteoMAUI.Model"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             x:DataType="viewModel:DetailsPageViewModel">
+    <ScrollView>
+        <VerticalStackLayout>
+            <Grid
+                ColumnDefinitions="*, *">
+                <Label
+                    Margin="30, 15, 0, 15"
+                    Style="{StaticResource MediumLabel}"
+                    Text="{Binding Alba, StringFormat='🌄 Alba: {0:HH:mm}'}"/>
+                <Label
+                    Grid.Column="1"
+                    HorizontalOptions="End"
+                    Margin="0, 15, 30, 15"
+                    Style="{StaticResource MediumLabel}"
+                    Text="{Binding Tramonto, StringFormat='🌅 Tramonto: {0:HH:mm}'}"/>
+            </Grid>
+            <Label
+                HorizontalOptions="Center"
+                Margin="0, 0, 0, 15"
+                Style="{StaticResource MediumLabel}"
+                Text="{Binding DescrizioneGiornata, StringFormat='{0}'}"/>
+            <ContentView>
+                <CollectionView ItemsSource="{Binding currentForecast}"
+                            SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:ForecastDaily">
+                            <Frame Style="{StaticResource CardView}">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:DetailsPageViewModel}}, Path=GoToDetailsHourCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                </Frame.GestureRecognizers>
+                                <Grid Padding="0" ColumnDefinitions="50,85,*, *">
+                                    <Image
+                                        Grid.Column="1"
+                                        Margin="0, 0, 0, 12"
+                                        Aspect="AspectFill"
+                                        HeightRequest="55"
+                                        Source="{Binding CurrentForecast1Day.ImageUrl}"
+                                        WidthRequest="55"/>
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding CurrentForecast1Day.DescMeteo}"
+                                        Style="{StaticResource MicroLabel}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="End"
+                                        Margin="0, 0, 0, 10"/>
+                                    <StackLayout
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center">
+                                        <Label
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding CurrentForecast1Day.Time, StringFormat='{0:HH:mm}'}"/>
+                                    </StackLayout>
+                                    <VerticalStackLayout
+                                        Grid.Column="2"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        Padding="10">
+                                        <Label Style="{StaticResource MediumLabel}" Text="{Binding  CurrentForecast1Day.Temperature2m, StringFormat='{0}°'}" Margin="0, 0, 0, 5"/>
+                                        <Label Style="{StaticResource SmallLabel }" Text="{Binding CurrentForecast1Day.ApparentTemperature, StringFormat='p. {0}°'}" 
+                                           TextColor="#999999"/>
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout
+                                        Grid.Column="3"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        Padding="10">
+                                        <Label
+                                            Style="{StaticResource SmallLabel}"
+                                            Text="{Binding CurrentForecast1Day.VelVento, StringFormat='༄ {0} km/h'}"/>
+                                        <Label
+                                            Margin="0, 9, 0, 0"
+                                            Style="{StaticResource MicroLabel}"
+                                            Text="{Binding CurrentForecast1Day.DirVento, StringFormat='  {0}'}"/>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ContentView>
+            <lvc:CartesianChart 
+                Margin="10"
+                x:Name="chart"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                HeightRequest="200"
+                Series="{Binding Series}"
+                XAxes="{Binding XAxes}"
+                YAxes="{Binding YAxes}"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
